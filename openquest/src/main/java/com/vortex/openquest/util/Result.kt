@@ -1,4 +1,4 @@
-package com.vortex.openquest.config
+package com.vortex.openquest.util
 
 sealed class Response<out R : Any> {
     class Success<R : Any>(val data: R) : Response<R>()

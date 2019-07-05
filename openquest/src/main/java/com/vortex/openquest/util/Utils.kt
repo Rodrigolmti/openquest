@@ -1,7 +1,5 @@
-package com.vortex.openquest
+package com.vortex.openquest.util
 
-import com.vortex.openquest.util.Request
-import com.vortex.openquest.util.RequestType
 import java.net.URL
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.HttpsURLConnection
@@ -28,9 +26,5 @@ fun setupHttpsConnection(
 }
 
 fun hostNameVerifier(connection: HttpsURLConnection, url: URL) {
-    connection.hostnameVerifier = object : HostnameVerifier {
-        override fun verify(hostname: String, session: SSLSession): Boolean {
-            return HttpsURLConnection.getDefaultHostnameVerifier().verify(url.host, session)
-        }
-    }
+    connection.hostnameVerifier = HostnameVerifier { _, session -> HttpsURLConnection.getDefaultHostnameVerifier().verify(url.host, session) }
 }

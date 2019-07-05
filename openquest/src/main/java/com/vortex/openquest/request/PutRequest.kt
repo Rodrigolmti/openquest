@@ -15,7 +15,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class DeleteRequest(override var request: Request) : RequestCommand {
+class PutRequest(override var request: Request) : RequestCommand {
 
     override suspend fun <R : Any> execute(): Response<R> = withContext(Dispatchers.IO) {
         suspendCoroutine<Response<R>> { continuation ->
@@ -29,7 +29,7 @@ class DeleteRequest(override var request: Request) : RequestCommand {
                 val url = request.getConnectionUrl()
                 val json = GsonBuilder().create().toJson(request.requestBody)
 
-                connection = setupHttpsConnection(url, request, RequestType.DELETE)
+                connection = setupHttpsConnection(url, request, RequestType.PUT)
                 connection?.let {
 
                     hostNameVerifier(it, url)

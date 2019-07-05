@@ -1,15 +1,11 @@
 package com.vortex.openquest.request
 
-import com.vortex.openquest.*
+import com.vortex.openquest.Openquest
 import com.vortex.openquest.contracts.RequestCommand
-import com.vortex.openquest.config.Error
-import com.vortex.openquest.config.Response
-import com.vortex.openquest.util.Request
-import com.vortex.openquest.util.RequestType
+import com.vortex.openquest.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
-import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -24,7 +20,7 @@ class GetRequest(override var request: Request) : RequestCommand {
 
             try {
 
-                val url = URL(request.pathUrl)
+                val url = request.getConnectionUrl()
 
                 connection = setupHttpsConnection(url, request, RequestType.GET)
                 connection?.let {

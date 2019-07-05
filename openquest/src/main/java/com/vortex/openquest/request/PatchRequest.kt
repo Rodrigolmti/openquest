@@ -1,12 +1,9 @@
 package com.vortex.openquest.request
 
 import com.google.gson.GsonBuilder
-import com.vortex.openquest.*
+import com.vortex.openquest.Openquest
 import com.vortex.openquest.contracts.RequestCommand
-import com.vortex.openquest.config.Error
-import com.vortex.openquest.config.Response
-import com.vortex.openquest.util.Request
-import com.vortex.openquest.util.RequestType
+import com.vortex.openquest.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -16,7 +13,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class UpdateRequest(override var request: Request) : RequestCommand {
+class PatchRequest(override var request: Request) : RequestCommand {
 
     override suspend fun <R : Any> execute(): Response<R> = withContext(Dispatchers.IO) {
         suspendCoroutine<Response<R>> { continuation ->
@@ -27,10 +24,10 @@ class UpdateRequest(override var request: Request) : RequestCommand {
 
                 initialValidations(request)
 
-                val url = URL(request.baseUrl)
+                val url = request.getConnectionUrl()
                 val json = GsonBuilder().create().toJson(request.requestBody)
 
-                connection = setupHttpsConnection(url, request, RequestType.UPDATE)
+                connection = setupHttpsConnection(url, request, RequestType.PATCH)
                 connection?.let {
 
                     hostNameVerifier(it, url)

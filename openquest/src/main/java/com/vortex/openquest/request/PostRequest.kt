@@ -3,10 +3,9 @@ package com.vortex.openquest.request
 import com.google.gson.GsonBuilder
 import com.vortex.openquest.*
 import com.vortex.openquest.contracts.RequestCommand
-import com.vortex.openquest.config.Error
-import com.vortex.openquest.config.Response
-import com.vortex.openquest.util.Request
-import com.vortex.openquest.util.RequestType
+import com.vortex.openquest.util.Error
+import com.vortex.openquest.util.Response
+import com.vortex.openquest.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -27,7 +26,7 @@ class PostRequest(override var request: Request) : RequestCommand {
 
                 initialValidations(request)
 
-                val url = URL(request.baseUrl)
+                val url = request.getConnectionUrl()
                 val json = GsonBuilder().create().toJson(request.requestBody)
 
                 connection = setupHttpsConnection(url, request, RequestType.POST)

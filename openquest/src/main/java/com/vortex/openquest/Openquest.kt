@@ -3,8 +3,8 @@ package com.vortex.openquest
 import com.vortex.openquest.adapter.GsonAdapterFactory
 import com.vortex.openquest.contracts.ConverterAdapter
 import com.vortex.openquest.contracts.RequestCommand
-import com.vortex.openquest.config.Response
 import com.vortex.openquest.util.Request
+import com.vortex.openquest.util.Response
 
 object Openquest {
 
@@ -13,7 +13,7 @@ object Openquest {
 
     fun setup(
         converterAdapter: ConverterAdapter? = null,
-        request: Request
+        request: Request? = null
     ): Openquest {
         converterAdapter?.let { this.converterAdapter = it }
         this.request = request
@@ -21,11 +21,9 @@ object Openquest {
     }
 
     suspend fun <R : Any> processRequest(requestCommand: RequestCommand): Response<R> {
-        request.let {
-
-
+        request?.let {
+            requestCommand.request.baseUrl = it.baseUrl
         }
-
         return requestCommand.execute()
     }
 }
