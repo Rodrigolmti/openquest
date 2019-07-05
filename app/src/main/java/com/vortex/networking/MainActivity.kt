@@ -34,8 +34,7 @@ class MainActivity : AppCompatActivity() {
                 pathUrl = "/posts"
             }
 
-            val getResponse = Openquest.processRequest<List<Todo>>(GetRequest(builder))
-            when(getResponse) {
+            when(val getResponse = Openquest.processRequest<List<Todo>>(GetRequest(builder))) {
                 is Response.Success -> {
                     print(getResponse.data)
                 }
@@ -53,10 +52,9 @@ class MainActivity : AppCompatActivity() {
 
             builder.requestBody = body
 
-            val postRepsonse = Openquest.processRequest<Todo>(PostRequest(builder))
-            when(postRepsonse) {
+            when(val postResponse = Openquest.processRequest<Todo>(PostRequest(builder))) {
                 is Response.Success -> {
-                    print(postRepsonse.data)
+                    print(postResponse.data)
                 }
                 is Response.Failure -> {
 

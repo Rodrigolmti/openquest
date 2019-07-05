@@ -7,13 +7,13 @@ data class Request(
     var baseUrl: String? = null,
     var pathUrl: String? = null,
     var requestBody: Any? = null,
+    var verifyName: Boolean = false,
     var readTimeout: Int = defaultTimeout,
     var connectionTimeout: Int = defaultTimeout
 ) {
 
     @Throws(IllegalArgumentException::class)
     fun getConnectionUrl(): URL {
-
         try {
 
             baseUrl?.let { base ->
@@ -39,7 +39,6 @@ data class Request(
 
         throw IllegalArgumentException("You must provide a baseUrl or pathUrl or both!")
     }
-
 }
 
 fun build(block: Request.() -> Unit): Request = Request().apply(block)

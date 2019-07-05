@@ -3,6 +3,7 @@ package com.vortex.openquest
 import com.vortex.openquest.adapter.GsonAdapterFactory
 import com.vortex.openquest.contracts.ConverterAdapter
 import com.vortex.openquest.contracts.RequestCommand
+import com.vortex.openquest.processor.RequestProcessor
 import com.vortex.openquest.util.Request
 import com.vortex.openquest.util.Response
 
@@ -27,5 +28,4 @@ object Openquest {
         return requestCommand.execute()
     }
 }
-
 
