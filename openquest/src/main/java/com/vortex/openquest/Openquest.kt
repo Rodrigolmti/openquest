@@ -3,29 +3,30 @@ package com.vortex.openquest
 import com.vortex.openquest.adapter.GsonAdapterFactory
 import com.vortex.openquest.contracts.ConverterAdapter
 import com.vortex.openquest.contracts.RequestCommand
-import com.vortex.openquest.processor.RequestProcessor
-import com.vortex.openquest.util.Request
 import com.vortex.openquest.util.Response
 
 object Openquest {
 
-    var converterAdapter: ConverterAdapter = GsonAdapterFactory().create()
-    private var request: Request? = null
+    private var converterAdapter: ConverterAdapter = GsonAdapterFactory()
+    private var baseUrl: String? = null
 
-    fun setup(
-        converterAdapter: ConverterAdapter? = null,
-        request: Request? = null
+    fun setBaseUrl(
+        baseUrl: String
     ): Openquest {
-        converterAdapter?.let { this.converterAdapter = it }
-        this.request = request
+        this.baseUrl = baseUrl
         return this
     }
 
-    suspend fun <R : Any> processRequest(requestCommand: RequestCommand): Response<R> {
-        request?.let {
-            requestCommand.request.baseUrl = it.baseUrl
-        }
+    fun setConverterAdapter(
+        converterAdapter: ConverterAdapter
+    ): Openquest {
+        converterAdapter.let { this.converterAdapter = it }
+        return this
+    }
+
+    suspend fun <R : Any> doRequest(requestCommand: RequestCommand): Response<R> {
+        baseUrl?.let { requestCommand.builder.baseUrl = it }
+        requestCommand.converterAdapter = converterAdapter
         return requestCommand.execute()
     }
 }
-

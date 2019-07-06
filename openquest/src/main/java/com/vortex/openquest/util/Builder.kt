@@ -3,13 +3,14 @@ package com.vortex.openquest.util
 import java.net.MalformedURLException
 import java.net.URL
 
-data class Request(
+data class Builder(
     var baseUrl: String? = null,
     var pathUrl: String? = null,
     var requestBody: Any? = null,
     var verifyName: Boolean = false,
     var readTimeout: Int = defaultTimeout,
-    var connectionTimeout: Int = defaultTimeout
+    var connectionTimeout: Int = defaultTimeout,
+    var headers: HashMap<String, String> = hashMapOf()
 ) {
 
     @Throws(IllegalArgumentException::class)
@@ -41,4 +42,4 @@ data class Request(
     }
 }
 
-fun build(block: Request.() -> Unit): Request = Request().apply(block)
+fun build(block: Builder.() -> Unit): Builder = Builder().apply(block)

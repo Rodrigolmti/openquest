@@ -6,9 +6,6 @@ import com.vortex.openquest.contracts.ConverterAdapter
 import java.io.InputStream
 
 class GsonAdapterFactory : ConverterAdapter {
-
-    override fun create() = GsonAdapterFactory()
-
     override fun <R> serializeResponse(inputStream: InputStream?): R? {
         return inputStream?.let { stream ->
             val response = stream.bufferedReader(Charsets.UTF_8).use { it.readText() }

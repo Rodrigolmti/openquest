@@ -1,11 +1,9 @@
 package com.vortex.openquest.processor
 
 import com.google.gson.GsonBuilder
-import com.vortex.openquest.Openquest
 import com.vortex.openquest.contracts.RequestCommand
+import com.vortex.openquest.util.Builder
 import com.vortex.openquest.util.Error
-import com.vortex.openquest.util.Request
-import com.vortex.openquest.util.RequestType
 import com.vortex.openquest.util.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,8 +15,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 internal class RequestProcessor(
-    private val requestCommand: RequestCommand,
-    private val requestType: RequestType
+    private val requestCommand: RequestCommand
 ) {
 
     suspend operator fun <R : Any> invoke(): Response<R> = withContext(Dispatchers.IO) {
@@ -28,15 +25,21 @@ internal class RequestProcessor(
 
             try {
 
-                initialValidations(requestCommand.request)
-                val url = requestCommand.request.getConnectionUrl()
+                initialValidations(requestCommand.builder)
+                val url = requestCommand.builder.getConnectionUrl()
 
                 connection = if (url.protocol == "https") url.openConnection() as HttpsURLConnection else url.openConnection() as HttpURLConnection
-                connection.connectTimeout = requestCommand.request.connectionTimeout
-                connection.readTimeout = requestCommand.request.readTimeout
-                connection.requestMethod = requestType.name
+                connection.connectTimeout = requestCommand.builder.connectionTimeout
+                connection.readTimeout = requestCommand.builder.readTimeout
+                connection.requestMethod = requestCommand.identifier.name
 
-                requestCommand.request.requestBody?.let { body ->
+                requestCommand.builder.headers.takeIf { it.isNotEmpty() }?.let { headers ->
+                    headers.forEach { (key, value) ->
+                        connection.setRequestProperty(key, value)
+                    }
+                }
+
+                requestCommand.builder.requestBody?.let { body ->
                     connection.doOutput = true
                     val json = GsonBuilder().create().toJson(body)
                     connection.outputStream.use { outputStream ->
@@ -47,13 +50,14 @@ internal class RequestProcessor(
 
                 connection.connect()
 
-                val response = Openquest.converterAdapter.serializeResponse<R>(connection.inputStream)
-                response?.let {
-                    continuation.resume(Response.Success(connection.responseCode, response))
-                } ?: run {
-                    continuation.resume(Response.Failure(Error.Unknown))
+                requestCommand.converterAdapter?.let { converter ->
+                    val response = converter.serializeResponse<R>(connection.inputStream)
+                    response?.let {
+                        continuation.resume(Response.Success(connection.responseCode, response))
+                    } ?: run {
+                        continuation.resume(Response.Failure(Error.Unknown))
+                    }
                 }
-
 
             } catch (error: IOException) {
                 continuation.resumeWithException(error)
@@ -66,8 +70,8 @@ internal class RequestProcessor(
     }
 
     @Throws(IllegalArgumentException::class)
-    private fun initialValidations(request: Request) {
-        if (request.pathUrl.isNullOrEmpty() && request.baseUrl.isNullOrEmpty()) {
+    private fun initialValidations(builder: Builder) {
+        if (builder.pathUrl.isNullOrEmpty() && builder.baseUrl.isNullOrEmpty()) {
             throw IllegalArgumentException("You need to provide a url!")
         }
     }

@@ -3,8 +3,7 @@ package com.vortex.networking
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.vortex.openquest.Openquest
-import com.vortex.openquest.request.GetRequest
-import com.vortex.openquest.request.PostRequest
+import com.vortex.openquest.request.*
 import com.vortex.openquest.util.Response
 import com.vortex.openquest.util.build
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +33,14 @@ class MainActivity : AppCompatActivity() {
                 pathUrl = "/posts"
             }
 
-            when(val getResponse = Openquest.processRequest<List<Todo>>(GetRequest(builder))) {
+            val body = Todo(
+                "1",
+                201,
+                "Xablau das neves",
+                false
+            )
+
+            when(val getResponse = Openquest.doRequest<List<Todo>>(GetRequest(builder))) {
                 is Response.Success -> {
                     print(getResponse.data)
                 }
@@ -43,18 +49,40 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            val body = Todo(
-                "1",
-                201,
-                "Xablau das neves",
-                false
-            )
-
             builder.requestBody = body
 
-            when(val postResponse = Openquest.processRequest<Todo>(PostRequest(builder))) {
+            when(val postResponse = Openquest.doRequest<Todo>(PostRequest(builder))) {
                 is Response.Success -> {
                     print(postResponse.data)
+                }
+                is Response.Failure -> {
+
+                }
+            }
+
+            builder.pathUrl = "/posts/1"
+
+            when(val putResponse = Openquest.doRequest<Todo>(PutRequest(builder))) {
+                is Response.Success -> {
+                    print(putResponse.data)
+                }
+                is Response.Failure -> {
+
+                }
+            }
+
+            when(val deleteResponse = Openquest.doRequest<Todo>(DeleteRequest(builder))) {
+                is Response.Success -> {
+                    print(deleteResponse.data)
+                }
+                is Response.Failure -> {
+
+                }
+            }
+
+            when(val patchResponse = Openquest.doRequest<Todo>(PatchRequest(builder))) {
+                is Response.Success -> {
+                    print(patchResponse.data)
                 }
                 is Response.Failure -> {
 
