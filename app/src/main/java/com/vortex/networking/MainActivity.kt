@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             builder.requestBody = body
-
             when(val postResponse = Openquest.doRequest<Todo>(PostRequest(builder))) {
                 is Response.Success -> {
                     print(postResponse.data)
