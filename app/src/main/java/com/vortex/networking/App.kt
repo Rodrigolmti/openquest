@@ -2,7 +2,7 @@ package com.vortex.networking
 
 import android.app.Application
 import com.vortex.openquest.Openquest
-import com.vortex.openquest.adapter.GsonAdapterFactory
+import com.vortex.openquest.adapter.GsonAdapter
 
 class App : Application() {
 
@@ -11,6 +11,6 @@ class App : Application() {
 
         Openquest
             .setBaseUrl("https://jsonplaceholder.typicode.com")
-            .setConverterAdapter(GsonAdapterFactory())
+            .setConverterAdapter(GsonAdapter())
     }
 }

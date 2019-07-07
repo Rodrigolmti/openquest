@@ -8,6 +8,7 @@ import com.vortex.openquest.util.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.io.InputStream
 import java.net.HttpURLConnection
 import javax.net.ssl.HttpsURLConnection
 import kotlin.coroutines.resume
@@ -71,7 +72,7 @@ internal class RequestProcessor(
 
     @Throws(IllegalArgumentException::class)
     private fun initialValidations(builder: Builder) {
-        if (builder.pathUrl.isNullOrEmpty() && builder.baseUrl.isNullOrEmpty()) {
+        if (builder.path.isNullOrEmpty() && builder.baseUrl.isNullOrEmpty()) {
             throw IllegalArgumentException("You need to provide a url!")
         }
     }

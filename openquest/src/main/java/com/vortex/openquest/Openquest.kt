@@ -1,13 +1,13 @@
 package com.vortex.openquest
 
-import com.vortex.openquest.adapter.GsonAdapterFactory
+import com.vortex.openquest.adapter.GsonAdapter
 import com.vortex.openquest.contracts.ConverterAdapter
 import com.vortex.openquest.contracts.RequestCommand
 import com.vortex.openquest.util.Response
 
 object Openquest {
 
-    private var converterAdapter: ConverterAdapter = GsonAdapterFactory()
+    private var converterAdapter: ConverterAdapter = GsonAdapter()
     private var baseUrl: String? = null
 
     fun setBaseUrl(

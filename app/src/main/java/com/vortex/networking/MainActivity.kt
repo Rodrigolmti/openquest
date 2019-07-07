@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         uiScope.launch {
 
             val builder = build {
-                pathUrl = "/posts"
+                path = "/posts"
             }
 
             val body = Todo(
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            builder.pathUrl = "/posts/1"
+            builder.path = "/posts/1"
 
             when(val putResponse = Openquest.doRequest<Todo>(PutRequest(builder))) {
                 is Response.Success -> {
