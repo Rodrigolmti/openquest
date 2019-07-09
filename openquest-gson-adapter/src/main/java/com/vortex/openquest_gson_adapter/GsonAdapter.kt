@@ -1,4 +1,4 @@
-package com.vortex.openquest.adapter
+package com.vortex.openquest_gson_adapter
 
 /*
 * MIT License

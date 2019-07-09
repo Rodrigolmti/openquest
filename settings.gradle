@@ -1,2 +1,4 @@
 include ':app', ':openquest'
 rootProject.name='Networking'
+include ':openquest-gson-adapter'
+include ':openquest-moshi-adapter'

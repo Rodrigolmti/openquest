@@ -24,14 +24,13 @@ package com.vortex.openquest
 * SOFTWARE.
 */
 
-import com.vortex.openquest.adapter.GsonAdapter
 import com.vortex.openquest.contracts.ConverterAdapter
 import com.vortex.openquest.contracts.RequestCommand
 import com.vortex.openquest.util.Response
 
 object Openquest {
 
-    private var converterAdapter: ConverterAdapter = GsonAdapter()
+    private var converterAdapter: ConverterAdapter? = null
     private var baseUrl: String? = null
 
     fun setBaseUrl(

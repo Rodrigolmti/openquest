@@ -1,4 +1,4 @@
-package com.vortex.openquest.adapter
+package com.vortex.openquest_moshi_adapter
 
 /*
 * MIT License
@@ -17,7 +17,7 @@ package com.vortex.openquest.adapter
 *
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -27,11 +27,13 @@ package com.vortex.openquest.adapter
 import com.vortex.openquest.contracts.ConverterAdapter
 import java.io.InputStream
 
-//class MoshiAdapterFactory private constructor(): ConverterAdapter {
-//
-//    override fun create() = MoshiAdapterFactory()
-//
-//    override fun <R> serializeResponse(inputStream: InputStream?) : R? {
-//
-//    }
-//}
+class MoshiAdapterFactory private constructor(): ConverterAdapter {
+
+    override fun <R> serializeBody(body: R): ByteArray {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun <R> serializeResponse(inputStream: InputStream?) : R? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
