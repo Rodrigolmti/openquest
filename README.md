@@ -7,8 +7,8 @@ Openquest is a opensource Android library for requests [NOT READY]
 # Missing
  - Fix problems with gson serialization linkedTreeMap
  - Implement moshi serialization
- - Extract gson and moshi, implementations to seperate lib/module
- - verify names
+ - Verify names in https
+ - Deploy lib 
  
 # How to use
 
