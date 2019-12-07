@@ -26,14 +26,15 @@ package com.vortex.openquest_moshi_adapter
 
 import com.vortex.openquest.contracts.ConverterAdapter
 import java.io.InputStream
+import kotlin.reflect.KClass
 
 class MoshiAdapterFactory private constructor(): ConverterAdapter {
 
-    override fun <R> serializeBody(body: R): ByteArray {
+    override fun <R : Any> serializeResponse(inputStream: InputStream?, clazz: Class<R>): R? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun <R> serializeResponse(inputStream: InputStream?) : R? {
+    override fun <R> serializeBody(body: R): ByteArray {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

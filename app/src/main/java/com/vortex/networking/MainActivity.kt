@@ -45,48 +45,48 @@ class MainActivity : AppCompatActivity() {
                     print(getResponse.data)
                 }
                 is Response.Failure -> {
-
+                    print(getResponse.error)
                 }
             }
 
-            builder.requestBody = body
-            when(val postResponse = Openquest.doRequest<Todo>(PostRequest(builder))) {
-                is Response.Success -> {
-                    print(postResponse.data)
-                }
-                is Response.Failure -> {
+//            builder.requestBody = body
+//            when(val postResponse = Openquest.doRequest<Todo>(PostRequest(builder))) {
+//                is Response.Success -> {
+//                    print(postResponse.data)
+//                }
+//                is Response.Failure -> {
+//                    print(postResponse.error)
+//                }
+//            }
+//
+//            builder.path = "/posts/1"
+//
+//            when(val putResponse = Openquest.doRequest<Todo>(PutRequest(builder))) {
+//                is Response.Success -> {
+//                    print(putResponse.data)
+//                }
+//                is Response.Failure -> {
+//                    print(putResponse.error)
+//                }
+//            }
 
-                }
-            }
-
-            builder.path = "/posts/1"
-
-            when(val putResponse = Openquest.doRequest<Todo>(PutRequest(builder))) {
-                is Response.Success -> {
-                    print(putResponse.data)
-                }
-                is Response.Failure -> {
-
-                }
-            }
-
-            when(val deleteResponse = Openquest.doRequest<Todo>(DeleteRequest(builder))) {
-                is Response.Success -> {
-                    print(deleteResponse.data)
-                }
-                is Response.Failure -> {
-
-                }
-            }
-
-            when(val patchResponse = Openquest.doRequest<Todo>(PatchRequest(builder))) {
-                is Response.Success -> {
-                    print(patchResponse.data)
-                }
-                is Response.Failure -> {
-
-                }
-            }
+//            when(val deleteResponse = Openquest.doRequest<Todo>(DeleteRequest(builder))) {
+//                is Response.Success -> {
+//                    print(deleteResponse.data)
+//                }
+//                is Response.Failure -> {
+//                    print(deleteResponse.error)
+//                }
+//            }
+//
+//            when(val patchResponse = Openquest.doRequest<Todo>(PatchRequest(builder))) {
+//                is Response.Success -> {
+//                    print(patchResponse.data)
+//                }
+//                is Response.Failure -> {
+//                    print(patchResponse.error)
+//                }
+//            }
         }
     }
 }

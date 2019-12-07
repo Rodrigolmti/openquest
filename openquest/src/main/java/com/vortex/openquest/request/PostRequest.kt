@@ -30,12 +30,14 @@ import com.vortex.openquest.processor.RequestProcessor
 import com.vortex.openquest.util.Builder
 import com.vortex.openquest.util.RequestType
 import com.vortex.openquest.util.Response
+import kotlin.reflect.KClass
 
 class PostRequest(
     override var builder: Builder
 ) : RequestCommand {
 
-    override suspend fun <R : Any> execute(): Response<R> = RequestProcessor(this).invoke()
+    override suspend fun <R : Any> execute(clazz: Class<R>): Response<R> =
+        RequestProcessor(this).invoke(clazz)
 
     override var identifier: RequestType = RequestType.POST
 

@@ -42,6 +42,10 @@ data class Builder(
     fun getConnectionUrl(): URL {
         try {
 
+            if (path.isNullOrEmpty() && baseUrl.isNullOrEmpty()) {
+                throw IllegalArgumentException("You need to provide a url!")
+            }
+
             val stringBuilder = StringBuilder()
 
             pathParams.takeIf { it.isNotEmpty() }?.let { params ->

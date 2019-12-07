@@ -24,8 +24,8 @@ package com.vortex.openquest.processor
 * SOFTWARE.
 */
 
+import com.vortex.openquest.Openquest
 import com.vortex.openquest.contracts.RequestCommand
-import com.vortex.openquest.util.Builder
 import com.vortex.openquest.util.Error
 import com.vortex.openquest.util.Response
 import kotlinx.coroutines.Dispatchers
@@ -36,67 +36,68 @@ import javax.net.ssl.HttpsURLConnection
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.reflect.KClass
 
 internal class RequestProcessor(
     private val requestCommand: RequestCommand
 ) {
 
-    suspend operator fun <R : Any> invoke(): Response<R> = withContext(Dispatchers.IO) {
-        suspendCoroutine<Response<R>> { continuation ->
+    suspend inline operator fun <R : Any> invoke(clazz: Class<R>): Response<R> =
+        withContext(Dispatchers.IO) {
+            suspendCoroutine<Response<R>> { continuation ->
 
-            var connection: HttpURLConnection? = null
+                //TODO: Find a better place for this
+                Openquest.baseUrl?.let { requestCommand.builder.baseUrl = it }
+                requestCommand.converterAdapter = Openquest.converterAdapter
 
-            try {
+                var connection: HttpURLConnection? = null
 
-                initialValidations(requestCommand.builder)
-                val url = requestCommand.builder.getConnectionUrl()
+                try {
 
-                connection = if (url.protocol == "https") url.openConnection() as HttpsURLConnection else url.openConnection() as HttpURLConnection
-                connection.connectTimeout = requestCommand.builder.connectionTimeout
-                connection.readTimeout = requestCommand.builder.readTimeout
-                connection.requestMethod = requestCommand.identifier.name
+                    val url = requestCommand.builder.getConnectionUrl()
 
-                requestCommand.builder.headers.takeIf { it.isNotEmpty() }?.let { headers ->
-                    headers.forEach { (key, value) ->
-                        connection.setRequestProperty(key, value)
-                    }
-                }
+                    connection = if (url.protocol == "https")
+                        url.openConnection() as HttpsURLConnection
+                    else
+                        url.openConnection() as HttpURLConnection
+                    connection.connectTimeout = requestCommand.builder.connectionTimeout
+                    connection.readTimeout = requestCommand.builder.readTimeout
+                    connection.requestMethod = requestCommand.identifier.name
 
-                requestCommand.converterAdapter?.let { converter ->
-                    requestCommand.builder.requestBody?.let { body ->
-                        connection.doOutput = true
-                        connection.outputStream.use { outputStream ->
-                            outputStream.write(converter.serializeBody(body))
+                    requestCommand.builder.headers.takeIf { it.isNotEmpty() }?.let { headers ->
+                        headers.forEach { (key, value) ->
+                            connection.setRequestProperty(key, value)
                         }
                     }
 
-                    connection.connect()
+                    requestCommand.converterAdapter?.let { converter ->
+                        requestCommand.builder.requestBody?.let { body ->
+                            connection.doOutput = true
+                            connection.outputStream.use { outputStream ->
+                                outputStream.write(converter.serializeBody(body))
+                            }
+                        }
 
-                    val response = converter.serializeResponse<R>(connection.inputStream)
-                    response?.let {
-                        continuation.resume(Response.Success(connection.responseCode, response))
+                        connection.connect()
+
+                        val response = converter.serializeResponse(connection.inputStream, clazz)
+                        response?.let {
+                            continuation.resume(Response.Success(connection.responseCode, response))
+                        } ?: run {
+                            continuation.resume(Response.Failure(Error.Unknown))
+                        }
+
                     } ?: run {
-                        continuation.resume(Response.Failure(Error.Unknown))
+                        continuation.resume(Response.Failure(Error.InvalidConverterAdpter))
                     }
 
-                } ?: run {
-                    continuation.resume(Response.Failure(Error.InvalidConverterAdpter))
+                } catch (error: IOException) {
+                    continuation.resumeWithException(error)
+                    error.printStackTrace()
+                } finally {
+                    connection?.inputStream?.close()
+                    connection?.disconnect()
                 }
-
-            } catch (error: IOException) {
-                continuation.resumeWithException(error)
-                error.printStackTrace()
-            } finally {
-                connection?.inputStream?.close()
-                connection?.disconnect()
             }
         }
-    }
-
-    @Throws(IllegalArgumentException::class)
-    private fun initialValidations(builder: Builder) {
-        if (builder.path.isNullOrEmpty() && builder.baseUrl.isNullOrEmpty()) {
-            throw IllegalArgumentException("You need to provide a url!")
-        }
-    }
 }

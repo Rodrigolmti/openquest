@@ -24,22 +24,37 @@ package com.vortex.openquest_gson_adapter
 * SOFTWARE.
 */
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.vortex.openquest.contracts.ConverterAdapter
+import org.json.JSONArray
+import org.json.JSONObject
+import org.json.JSONTokener
 import java.io.InputStream
 
 class GsonAdapter : ConverterAdapter {
 
-    override fun <R> serializeResponse(inputStream: InputStream?): R? {
-        return inputStream?.let { stream ->
+    override fun <R : Any> serializeResponse(inputStream: InputStream?, clazz: Class<R>): R? =
+        inputStream?.let { stream ->
             val response = stream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-            GsonBuilder().create().fromJson<R>(response, object : TypeToken<R>() {}.type)
+            when (JSONTokener(response).nextValue()) {
+                is JSONObject -> {
+                    GsonBuilder().create().fromJson<R>(response, clazz)
+                }
+                is JSONArray -> {
+                    //TODO: Fix this parse
+                    GsonBuilder().create().fromJson(
+                        response,
+                        TypeToken.getParameterized(List::class.java, clazz).type
+                    )
+                }
+                else -> {
+                    Gson().fromJson(response, object : TypeToken<R>() {}.type)
+                }
+            }
         }
-    }
 
-    override fun <R> serializeBody(body: R) : ByteArray {
-        val json = GsonBuilder().create().toJson(body)
-        return json.toByteArray(Charsets.UTF_8)
-    }
+    override fun <R> serializeBody(body: R): ByteArray =
+        GsonBuilder().create().toJson(body).toByteArray(Charsets.UTF_8)
 }

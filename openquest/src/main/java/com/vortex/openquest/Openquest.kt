@@ -30,8 +30,8 @@ import com.vortex.openquest.util.Response
 
 object Openquest {
 
-    private var converterAdapter: ConverterAdapter? = null
-    private var baseUrl: String? = null
+    var converterAdapter: ConverterAdapter? = null
+    var baseUrl: String? = null
 
     fun setBaseUrl(
         baseUrl: String
@@ -47,9 +47,6 @@ object Openquest {
         return this
     }
 
-    suspend fun <R : Any> doRequest(requestCommand: RequestCommand): Response<R> {
-        baseUrl?.let { requestCommand.builder.baseUrl = it }
-        requestCommand.converterAdapter = converterAdapter
-        return requestCommand.execute()
-    }
+    suspend inline fun <reified R : Any> doRequest(requestCommand: RequestCommand): Response<R> =
+        requestCommand.execute(R::class.java)
 }
